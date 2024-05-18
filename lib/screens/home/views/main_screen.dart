@@ -1,15 +1,21 @@
 import 'dart:math';
 
-import 'package:expense_monitor/data/data.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-
+  final List<Expense> expenses;
+  const MainScreen(this.expenses, {super.key});
   @override
   Widget build(BuildContext context) {
+    final sumExpense = expenses
+        .fold<int>(
+            0, (previousValue, element) => previousValue + element.amount)
+        .toString();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
@@ -55,8 +61,7 @@ class MainScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -185,20 +190,20 @@ class MainScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Expense',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 Text(
-                                  '800.00',
-                                  style: TextStyle(
+                                  '$sumExpense.00',
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
@@ -221,7 +226,7 @@ class MainScreen extends StatelessWidget {
                 Text(
                   'Transactions',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -242,7 +247,7 @@ class MainScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                  itemCount: transactionsData.length,
+                  itemCount: expenses.length,
                   itemBuilder: (context, int i) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 20),
@@ -264,19 +269,22 @@ class MainScreen extends StatelessWidget {
                                     height: 55,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: transactionsData[i]['color'],
+                                      color: Color(expenses[i].category.color),
                                     ),
                                   ),
-                                  transactionsData[i]['icon'],
+                                  Image.asset(
+                                    'assets/${expenses[i].category.icon}.png',
+                                    scale: 1.5,
+                                    color: Colors.white,
+                                  ),
                                 ],
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                transactionsData[i]['name'],
+                                expenses[i].category.name,
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -287,17 +295,18 @@ class MainScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                transactionsData[i]['totalAmount'],
+                                '\$ ${expenses[i].amount}.00',
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
                                   // fontWeight: FontWeight.bold
                                 ),
                               ),
                               Text(
-                                transactionsData[i]['date'],
+                                DateFormat.yMMMd()
+                                    .format(expenses[i].date)
+                                    .toString(),
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline,
                                   fontSize: 12,

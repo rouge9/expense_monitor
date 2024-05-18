@@ -1,7 +1,10 @@
+import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_monitor/screens/stats/chart.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class StatScreen extends StatelessWidget {
   const StatScreen({super.key});
@@ -26,7 +29,12 @@ class StatScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
+                            builder: (context) => BlocProvider(
+                                  create: (context) =>
+                                      GetExpensesBloc(FirebaseExpenseRepo())
+                                        ..add(GetExpenses()),
+                                  child: const HomeScreen(),
+                                )));
                   },
                   icon: Icon(CupertinoIcons.arrow_left_circle_fill,
                       color: Theme.of(context).colorScheme.outline),
@@ -65,7 +73,7 @@ class StatScreen extends StatelessWidget {
                   Text(
                     '01 jan 2024 - 31 jan 2024',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                     ),
                   ),
@@ -73,7 +81,7 @@ class StatScreen extends StatelessWidget {
                   Text(
                     '\$ 3500.00',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
