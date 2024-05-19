@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -232,7 +233,14 @@ class MainScreen extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<Expense>(
+                        builder: (context) => TransactionsScreen(expenses),
+                      ),
+                    );
+                  },
                   child: Text(
                     'See all',
                     style: TextStyle(
@@ -247,7 +255,7 @@ class MainScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                  itemCount: expenses.length,
+                  itemCount: expenses.length > 5 ? 5 : expenses.length,
                   itemBuilder: (context, int i) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 20),

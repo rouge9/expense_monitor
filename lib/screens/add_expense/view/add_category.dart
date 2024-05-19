@@ -21,7 +21,8 @@ Future<dynamic> addCategory(BuildContext context) {
     'pet',
     'shopping',
     'tech',
-    'travel'
+    'travel',
+    'fuel'
   ];
   Category category = Category.empty;
 

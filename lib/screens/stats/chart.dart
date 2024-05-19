@@ -31,14 +31,12 @@ class _MyChartState extends State<MyChart> {
         ),
         width: 10,
         backDrawRodData: BackgroundBarChartRodData(
-            show: true,
-            toY: 5,
-            color: Theme.of(context).colorScheme.background),
+            show: true, toY: 5, color: Theme.of(context).colorScheme.surface),
       ),
     ]);
   }
 
-  List<BarChartGroupData> showingGroups() => List.generate(8, (i) {
+  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
         switch (i) {
           case 0:
             return makeGroupData(0, 2);
@@ -65,8 +63,9 @@ class _MyChartState extends State<MyChart> {
     return BarChartData(
       titlesData: FlTitlesData(
         show: true,
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
             sideTitles: SideTitles(
           showTitles: true,
@@ -82,7 +81,7 @@ class _MyChartState extends State<MyChart> {
         ),
       ),
       borderData: FlBorderData(show: false),
-      gridData: FlGridData(show: false),
+      gridData: const FlGridData(show: false),
       barGroups: showingGroups(),
     );
   }
@@ -97,28 +96,25 @@ class _MyChartState extends State<MyChart> {
 
     switch (value.toInt()) {
       case 0:
-        text = Text('01', style: style);
+        text = Text('Mon', style: style);
         break;
       case 1:
-        text = Text('02', style: style);
+        text = Text('Tue', style: style);
         break;
       case 2:
-        text = Text('03', style: style);
+        text = Text('Wed', style: style);
         break;
       case 3:
-        text = Text('04', style: style);
+        text = Text('Thr', style: style);
         break;
       case 4:
-        text = Text('05', style: style);
+        text = Text('Fri', style: style);
         break;
       case 5:
-        text = Text('06', style: style);
+        text = Text('Sat', style: style);
         break;
       case 6:
-        text = Text('07', style: style);
-        break;
-      case 7:
-        text = Text('08', style: style);
+        text = Text('Sun', style: style);
         break;
       default:
         text = Text('', style: style);
