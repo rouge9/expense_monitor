@@ -48,6 +48,11 @@ class _StatScreenState extends State<StatScreen> {
                     DateTime.now().subtract(const Duration(days: 7))) &&
                 element.date.isBefore(endDateRange ?? DateTime.now()))
             .toList();
+
+        final sumExpense = filteredExpenses
+            .fold<int>(
+                0, (previousValue, element) => previousValue + element.amount)
+            .toString();
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -249,7 +254,7 @@ class _StatScreenState extends State<StatScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          '\$ 3500.00',
+                          '\$ $sumExpense.00',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 22,

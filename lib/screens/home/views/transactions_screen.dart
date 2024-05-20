@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,98 @@ class TransactionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(0),
+            bottomLeft: Radius.circular(0),
+          ),
+        ),
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              const SizedBox(height: 20),
+              const Center(
+                child: Text(
+                  'Filter',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      'BY DATE',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        'Amount Range',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 16,
+                        ),
+                      )),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      'BY CATEGORY',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Padding(
@@ -44,12 +138,18 @@ class TransactionsScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.filter_list,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
+                    child: Builder(
+                      builder: (BuildContext context) {
+                        return IconButton(
+                          onPressed: () {
+                            Scaffold.of(context).openEndDrawer();
+                          },
+                          icon: Icon(
+                            Icons.filter_list,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
