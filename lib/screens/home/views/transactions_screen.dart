@@ -1,13 +1,20 @@
-import 'dart:math';
-
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-class TransactionsScreen extends StatelessWidget {
+class TransactionsScreen extends StatefulWidget {
   final List<Expense> expenses;
   const TransactionsScreen(this.expenses, {super.key});
+
+  @override
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends State<TransactionsScreen> {
+  bool dateAssending = true;
+  bool amountAssending = true;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +35,7 @@ class TransactionsScreen extends StatelessWidget {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Filter',
+                  'Sort By',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -46,36 +53,45 @@ class TransactionsScreen extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'BY DATE',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        'Amount Range',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 16,
+                    onTap: () {
+                      setState(() {
+                        dateAssending = !dateAssending;
+                      });
+
+                      if (dateAssending == true) {
+                        widget.expenses
+                            .sort((a, b) => a.date.compareTo(b.date));
+                      } else {
+                        widget.expenses
+                            .sort((a, b) => b.date.compareTo(a.date));
+                      }
+
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'By Date',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                          ),
                         ),
-                      )),
+                        dateAssending == false
+                            ? Icon(
+                                FontAwesomeIcons.chevronDown,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 16,
+                              )
+                            : Icon(
+                                FontAwesomeIcons.chevronUp,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 16,
+                              ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -89,17 +105,48 @@ class TransactionsScreen extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'BY CATEGORY',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 16,
-                      ),
+                    onTap: () {
+                      setState(() {
+                        amountAssending = !amountAssending;
+                      });
+
+                      if (amountAssending == true) {
+                        widget.expenses
+                            .sort((a, b) => a.amount.compareTo(b.amount));
+                      } else {
+                        widget.expenses
+                            .sort((a, b) => b.amount.compareTo(a.amount));
+                      }
+
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'By Amount',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                          ),
+                        ),
+                        amountAssending == false
+                            ? Icon(
+                                FontAwesomeIcons.chevronDown,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 16,
+                              )
+                            : Icon(
+                                FontAwesomeIcons.chevronUp,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 16,
+                              ),
+                      ],
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -157,7 +204,7 @@ class TransactionsScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                    itemCount: expenses.length,
+                    itemCount: widget.expenses.length,
                     itemBuilder: (context, int i) {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 15),
@@ -179,12 +226,12 @@ class TransactionsScreen extends StatelessWidget {
                                       height: 55,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color:
-                                            Color(expenses[i].category.color),
+                                        color: Color(
+                                            widget.expenses[i].category.color),
                                       ),
                                     ),
                                     Image.asset(
-                                      'assets/${expenses[i].category.icon}.png',
+                                      'assets/${widget.expenses[i].category.icon}.png',
                                       scale: 1.5,
                                       color: Colors.white,
                                     ),
@@ -192,7 +239,7 @@ class TransactionsScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
-                                  expenses[i].category.name,
+                                  widget.expenses[i].category.name,
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -206,7 +253,7 @@ class TransactionsScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  '\$ ${expenses[i].amount}.00',
+                                  '\$ ${widget.expenses[i].amount}.00',
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -216,7 +263,7 @@ class TransactionsScreen extends StatelessWidget {
                                 ),
                                 Text(
                                   DateFormat.yMMMd()
-                                      .format(expenses[i].date)
+                                      .format(widget.expenses[i].date)
                                       .toString(),
                                   style: TextStyle(
                                     color:
