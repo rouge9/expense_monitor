@@ -50,6 +50,8 @@ Future<dynamic> addCategory(BuildContext context) {
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
+                      dismissDirection: DismissDirection.down,
+                      behavior: SnackBarBehavior.floating,
                       content: Text(state.message),
                     ),
                   );

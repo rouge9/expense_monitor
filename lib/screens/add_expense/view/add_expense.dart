@@ -44,6 +44,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         } else if (state is CreateExpenseFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              dismissDirection: DismissDirection.down,
+              behavior: SnackBarBehavior.floating,
               content: Text(state.message),
               backgroundColor: Colors.red,
             ),
@@ -281,9 +283,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                     DateTime? newDate = await showDatePicker(
                                         context: context,
                                         initialDate: expense.date,
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime.now()
-                                            .add(const Duration(days: 365)));
+                                        firstDate: DateTime(2021),
+                                        lastDate: DateTime.now());
 
                                     if (newDate != null) {
                                       setState(() {

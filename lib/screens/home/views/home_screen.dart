@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:expense_monitor/screens/add_expense/blocs/create_categorybloc/create_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/delete_category_bloc/delete_category_bloc.dart';
@@ -8,7 +7,7 @@ import 'package:expense_monitor/screens/add_expense/view/add_expense.dart';
 import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/main_screen.dart';
 import 'package:expense_monitor/screens/home/views/main_shimmering_screen.dart';
-import 'package:expense_monitor/screens/stats/stats.dart';
+import 'package:expense_monitor/screens/stats/view/stats.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

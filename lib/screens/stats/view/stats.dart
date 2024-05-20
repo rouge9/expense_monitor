@@ -1,9 +1,8 @@
 import 'dart:math';
-
 import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
-import 'package:expense_monitor/screens/stats/chart.dart';
-import 'package:expense_monitor/screens/stats/stats_shummering_screen.dart';
+import 'package:expense_monitor/screens/stats/view/chart.dart';
+import 'package:expense_monitor/screens/stats/view/stats_shummering_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,15 +19,35 @@ class StatScreen extends StatefulWidget {
 class _StatScreenState extends State<StatScreen> {
   bool isIncome = false;
 
+  DateTime? startDateRange;
+  DateTime? endDateRange;
+  List<Expense>? filteredExpenses;
+
+  @override
+  void initState() {
+    super.initState();
+    startDateRange = DateTime.now().subtract(const Duration(days: 7));
+    endDateRange = DateTime.now();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String date = DateFormat.yMMMd().format(DateTime.now());
-    final String prevWeek = DateFormat.yMMMd()
-        .format(DateTime.now().subtract(const Duration(days: 7)));
+    final String date = DateFormat.yMMMd().format(
+        startDateRange ?? DateTime.now().subtract(const Duration(days: 7)));
+    final String prevWeek =
+        DateFormat.yMMMd().format(endDateRange ?? DateTime.now());
+
     return BlocBuilder<GetExpensesBloc, GetExpensesState>(
         builder: (context, state) {
       if (state is GetExpensesSuccess) {
         final List<Expense> expenses = state.expenses;
+
+        List<Expense> filteredExpenses = expenses
+            .where((element) =>
+                element.date.isAfter(startDateRange ??
+                    DateTime.now().subtract(const Duration(days: 7))) &&
+                element.date.isBefore(endDateRange ?? DateTime.now()))
+            .toList();
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -178,11 +197,54 @@ class _StatScreenState extends State<StatScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        Text(
-                          '$prevWeek - $date ',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 14,
+                        GestureDetector(
+                          onTap: () {
+                            showDateRangePicker(
+                              context: context,
+                              firstDate: DateTime(2022),
+                              lastDate: DateTime.now(),
+                              initialDateRange: DateTimeRange(
+                                start: DateTime.now()
+                                    .subtract(const Duration(days: 7)),
+                                end: DateTime.now(),
+                              ),
+                            ).then((pickedDateRange) {
+                              if (pickedDateRange != null) {
+                                if (pickedDateRange.duration.inDays <= 7) {
+                                  setState(() {
+                                    startDateRange = pickedDateRange.start;
+                                    endDateRange = pickedDateRange.end
+                                        .add(const Duration(days: 1));
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      dismissDirection: DismissDirection.down,
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Colors.redAccent,
+                                      content: Text(
+                                        'Date range should not be more than 7 days',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '$date - $prevWeek',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 5),
@@ -207,7 +269,7 @@ class _StatScreenState extends State<StatScreen> {
                 const SizedBox(height: 20),
                 Expanded(
                     child: ListView.builder(
-                  itemCount: expenses.length,
+                  itemCount: filteredExpenses.length,
                   itemBuilder: (context, i) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 15),
@@ -229,11 +291,12 @@ class _StatScreenState extends State<StatScreen> {
                                     height: 55,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Color(expenses[i].category.color),
+                                      color: Color(
+                                          filteredExpenses[i].category.color),
                                     ),
                                   ),
                                   Image.asset(
-                                    'assets/${expenses[i].category.icon}.png',
+                                    'assets/${filteredExpenses[i].category.icon}.png',
                                     scale: 1.5,
                                     color: Colors.white,
                                   ),
@@ -241,7 +304,7 @@ class _StatScreenState extends State<StatScreen> {
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                expenses[i].category.name,
+                                filteredExpenses[i].category.name,
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
@@ -255,17 +318,16 @@ class _StatScreenState extends State<StatScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '\$ ${expenses[i].amount}.00',
+                                '\$ ${filteredExpenses[i].amount}.00',
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
-                                  // fontWeight: FontWeight.bold
                                 ),
                               ),
                               Text(
                                 DateFormat.yMMMd()
-                                    .format(expenses[i].date)
+                                    .format(filteredExpenses[i].date)
                                     .toString(),
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline,
