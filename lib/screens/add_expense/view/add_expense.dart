@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:expense_monitor/components/button.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/delete_category_bloc/delete_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_categories_bloc/get_categories_bloc.dart';
@@ -318,51 +319,65 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                               SizedBox(
                                 height: MediaQuery.of(context).size.width * 0.2,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.15,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Theme.of(context).colorScheme.primary,
-                                      Theme.of(context).colorScheme.secondary,
-                                      Theme.of(context).colorScheme.tertiary,
-                                    ],
-                                    transform: const GradientRotation(0.5),
-                                  ),
-                                ),
-                                child: TextButton(
-                                  onPressed: isLoading
-                                      ? null
-                                      : () {
-                                          setState(() {
-                                            expense.amount = int.parse(
-                                                expenseController.text);
-                                          });
-                                          BlocProvider.of<CreateExpenseBloc>(
-                                                  context)
-                                              .add(CreateExpense(expense));
-                                        },
-                                  style: TextButton.styleFrom(
-                                    // backgroundColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: isLoading == false
-                                      ? const Text(
-                                          'SAVE',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        )
-                                      : const CircularProgressIndicator(
-                                          color: Colors.white,
-                                        ),
-                                ),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width,
+                              //   height:
+                              //       MediaQuery.of(context).size.width * 0.15,
+                              //   decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //     gradient: LinearGradient(
+                              //       colors: [
+                              //         Theme.of(context).colorScheme.primary,
+                              //         Theme.of(context).colorScheme.secondary,
+                              //         Theme.of(context).colorScheme.tertiary,
+                              //       ],
+                              //       transform: const GradientRotation(0.5),
+                              //     ),
+                              //   ),
+                              //   child: TextButton(
+                              //     onPressed: isLoading
+                              //         ? null
+                              //         : () {
+                              //             setState(() {
+                              //               expense.amount = int.parse(
+                              //                   expenseController.text);
+                              //             });
+                              //             BlocProvider.of<CreateExpenseBloc>(
+                              //                     context)
+                              //                 .add(CreateExpense(expense));
+                              //           },
+                              //     style: TextButton.styleFrom(
+                              //       // backgroundColor: Colors.black,
+                              //       shape: RoundedRectangleBorder(
+                              //         borderRadius: BorderRadius.circular(10),
+                              //       ),
+                              //     ),
+                              //     child: isLoading == false
+                              //         ? const Text(
+                              //             'SAVE',
+                              //             style: TextStyle(
+                              //               color: Colors.white,
+                              //               fontSize: 16,
+                              //             ),
+                              //           )
+                              //         : const CircularProgressIndicator(
+                              //             color: Colors.white,
+                              //           ),
+                              //   ),
+                              // ),
+
+                              Button(
+                                onPressed: () {
+                                  if (expenseController.text.isNotEmpty) {
+                                    setState(() {
+                                      expense.amount =
+                                          int.parse(expenseController.text);
+                                    });
+                                  }
+                                },
+                                text: 'Save',
+                                isGradient: true,
+                                isLoading: isLoading,
                               )
                             ],
                           ),

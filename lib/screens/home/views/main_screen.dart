@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 
 class MainScreen extends StatelessWidget {
@@ -79,10 +82,19 @@ class MainScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  child: Icon(
-                    FontAwesomeIcons.gear,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        try {
+                          context
+                              .read<SignInBloc>()
+                              .add(const SignOutRequired());
+                          GoogleSignIn().signOut();
+                        } catch (_) {}
+                      },
+                      icon: Icon(
+                        FontAwesomeIcons.gear,
+                        color: Theme.of(context).colorScheme.outline,
+                      )),
                 ),
               ],
             ),
