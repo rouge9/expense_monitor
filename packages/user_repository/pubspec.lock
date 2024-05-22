@@ -18,7 +18,7 @@ packages:
     source: hosted
     version: "2.11.0"
   bloc:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: bloc
       sha256: "106842ad6569f0b60297619e9e0b1885c2fb9bf84812935490e6c5275777804e"
@@ -81,22 +81,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  crypto:
-    dependency: transitive
-    description:
-      name: crypto
-      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.3"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      sha256: d57953e10f9f8327ce64a508a355f0b1ec902193f66288e8cb5070e7c47eeb2d
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.6"
   equatable:
     dependency: "direct main"
     description:
@@ -105,13 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.5"
-  expense_repository:
-    dependency: "direct main"
-    description:
-      path: "packages/expense_repository"
-      relative: true
-    source: path
-    version: "0.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -145,7 +122,7 @@ packages:
     source: hosted
     version: "5.11.5"
   firebase_core:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: firebase_core
       sha256: "372d94ced114b9c40cb85e18c50ac94a7e998c8eec630c50d7aec047847d27bf"
@@ -168,22 +145,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.17.0"
-  fixnum:
-    dependency: transitive
-    description:
-      name: fixnum
-      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
-  fl_chart:
-    dependency: "direct main"
-    description:
-      name: fl_chart
-      sha256: "00b74ae680df6b1135bdbea00a7d1fc072a9180b7c3f3702e4b19a9943f5ed7d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.66.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -197,14 +158,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.1.5"
-  flutter_hsvcolor_picker:
-    dependency: "direct main"
-    description:
-      name: flutter_hsvcolor_picker
-      sha256: ea5868dbb1c840ef502bbf60168b26e18eab13a3a2b07bfef0c59a64e7fedc2c
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.5.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -223,14 +176,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  font_awesome_flutter:
-    dependency: "direct main"
-    description:
-      name: font_awesome_flutter
-      sha256: "275ff26905134bcb59417cf60ad979136f1f8257f2f449914b2c3e05bbb4cd6f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "10.7.0"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -295,14 +240,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  intl:
-    dependency: "direct main"
-    description:
-      name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -391,14 +328,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-  shimmer:
-    dependency: "direct main"
-    description:
-      name: shimmer
-      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -412,14 +341,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  sprintf:
-    dependency: transitive
-    description:
-      name: sprintf
-      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -468,21 +389,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
-  user_repository:
-    dependency: "direct main"
-    description:
-      path: "packages/user_repository"
-      relative: true
-    source: path
-    version: "0.0.1"
-  uuid:
-    dependency: "direct main"
-    description:
-      name: uuid
-      sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.4.0"
   vector_math:
     dependency: transitive
     description:

@@ -19,6 +19,9 @@ dependencies:
   shimmer: ^3.0.0
 
   firebase_core: ^2.16.0
+  firebase_auth: ^4.19.5
+  cloud_firestore: ^4.17.3
+  google_sign_in: ^6.2.1
 
   bloc: ^8.1.2
   flutter_bloc: ^8.1.3
@@ -26,6 +29,9 @@ dependencies:
 
   expense_repository:
     path: packages/expense_repository
+
+  user_repository:
+    path: packages/user_repository
 
 dev_dependencies:
   flutter_test:

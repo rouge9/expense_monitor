@@ -204,68 +204,71 @@ Future<dynamic> addCategory(BuildContext context) {
                             showDialog(
                               context: context,
                               builder: (ctx2) {
-                                return AlertDialog(
-                                  title: const Text(
-                                    'Pick a color',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  content: SizedBox(
-                                    height: MediaQuery.of(context).size.height,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ColorPicker(
-                                          color: colorSelected,
-                                          onChanged: (color) {
-                                            setState(() {
-                                              colorSelected = color;
-                                            });
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.15,
-                                          child: TextButton(
-                                            onPressed: () {
-                                              Category category =
-                                                  Category.empty;
-                                              category.categoryId =
-                                                  const Uuid().v1();
-                                              category.name =
-                                                  categoryNameController.text;
-                                              category.icon = iconSelected;
-                                              category.color =
-                                                  colorSelected.value;
-
-                                              Navigator.pop(context);
+                                return SingleChildScrollView(
+                                  child: AlertDialog(
+                                    title: const Text(
+                                      'Pick a color',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ColorPicker(
+                                            color: colorSelected,
+                                            onChanged: (color) {
+                                              setState(() {
+                                                colorSelected = color;
+                                              });
                                             },
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.black,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.15,
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Category category =
+                                                    Category.empty;
+                                                category.categoryId =
+                                                    const Uuid().v1();
+                                                category.name =
+                                                    categoryNameController.text;
+                                                category.icon = iconSelected;
+                                                category.color =
+                                                    colorSelected.value;
+
+                                                Navigator.pop(context);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                backgroundColor: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
                                               ),
-                                            ),
-                                            child: const Text(
-                                              'PICK',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
+                                              child: const Text(
+                                                'PICK',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
