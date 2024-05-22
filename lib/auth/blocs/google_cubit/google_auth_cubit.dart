@@ -11,12 +11,11 @@ class GoogleAuthCubit extends Cubit<GoogleAuthState> {
     required UserRepository userRepo,
   })  : _userRepository = userRepo,
         super(GoogleAuthInitial());
-  final GoogleSignIn _googleSignIn =
-      GoogleSignIn(scopes: ['email', 'profile', 'displayName']);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final _auth = FirebaseAuth.instance;
 
-  void login() async {
+  Future<void> login() async {
     emit(GoogleAuthLoading());
     try {
       // select google account

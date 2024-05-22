@@ -85,10 +85,13 @@ class MainScreen extends StatelessWidget {
                   child: IconButton(
                       onPressed: () {
                         try {
-                          context
-                              .read<SignInBloc>()
-                              .add(const SignOutRequired());
-                          GoogleSignIn().signOut();
+                          if (GoogleSignIn().currentUser != null) {
+                            GoogleSignIn().signOut();
+                          } else {
+                            context
+                                .read<SignInBloc>()
+                                .add(const SignOutRequired());
+                          }
                         } catch (_) {}
                       },
                       icon: Icon(

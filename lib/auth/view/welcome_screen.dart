@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';

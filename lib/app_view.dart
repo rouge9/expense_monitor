@@ -22,6 +22,11 @@ class MyAppView extends StatelessWidget {
             userRepo: context.read<AuthenticationBloc>().userRepository,
           ),
         ),
+        BlocProvider(
+          create: (context) => SignInBloc(
+              userRepository:
+                  context.read<AuthenticationBloc>().userRepository),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -44,6 +49,12 @@ class MyAppView extends StatelessWidget {
                     create: (context) => SignInBloc(
                         userRepository:
                             context.read<AuthenticationBloc>().userRepository),
+                  ),
+                  BlocProvider(
+                    create: (context) => GoogleAuthCubit(
+                      userRepo:
+                          context.read<AuthenticationBloc>().userRepository,
+                    ),
                   ),
                   BlocProvider(
                     create: (context) => GetExpensesBloc(FirebaseExpenseRepo())

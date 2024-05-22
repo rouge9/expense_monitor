@@ -12,6 +12,6 @@ class AuthenticationUserChanged extends AuthenticationEvent {
 
   final User? user;
 
-  @override
-  List<Object> get props => user == null ? [] : [user!];
+  // @override
+  // List<Object> get props => user == null ? [] : [user!];
 }

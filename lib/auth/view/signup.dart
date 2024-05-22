@@ -1,9 +1,13 @@
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
+import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:expense_monitor/auth/view/signin.dart';
 import 'package:expense_monitor/components/button.dart';
 import 'package:expense_monitor/components/my_text_field.dart';
+import 'package:expense_monitor/screens/home/views/home_screen.dart';
+import 'package:expense_monitor/screens/home/views/main_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -300,19 +304,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) => SignInBloc(
-                                    userRepository: context
-                                        .read<AuthenticationBloc>()
-                                        .userRepository,
-                                  ),
-                                  child: const SignInScreen(),
-                                ),
-                              ),
-                            );
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SignInScreen()));
                           },
                           child: Text(
                             'Sign In',
@@ -344,12 +340,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         isLoading: signUpRequired),
                     const SizedBox(height: 20),
                     const SizedBox(height: 20),
-                    Button(
-                        onPressed: () {},
-                        text: 'Continue with Google',
-                        icon: const Icon(FontAwesomeIcons.google,
-                            color: Colors.white),
-                        isGradient: false),
+                    BlocConsumer<GoogleAuthCubit, GoogleAuthState>(
+                        listener: (context, state) {
+                      if (state is GoogleAuthFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                          ),
+                        );
+                      }
+                      if (state is GoogleAuthSuccess) {
+                        Navigator.pop(context);
+                      }
+                    }, builder: (context, state) {
+                      return Button(
+                        onPressed: () {
+                          state is GoogleAuthLoading
+                              ? null
+                              : context.read<GoogleAuthCubit>().login();
+                        },
+                        text: 'Continue with google',
+                        icon: const Icon(
+                          FontAwesomeIcons.google,
+                          color: Colors.white,
+                        ),
+                        isGradient: false,
+                        isLoading: state is GoogleAuthLoading,
+                      );
+                    }),
                   ],
                 ),
               ),
