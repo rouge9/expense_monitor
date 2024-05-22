@@ -1,6 +1,7 @@
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:expense_monitor/auth/view/forgot_password.dart';
 import 'package:expense_monitor/components/button.dart';
 import 'package:expense_monitor/components/my_text_field.dart';
 import 'package:flutter/cupertino.dart';
@@ -102,7 +103,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgotPassword(),
+                        ),
+                      );
+                    },
                     child: Text(
                       'Forgot Password?',
                       style: TextStyle(

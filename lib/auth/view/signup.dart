@@ -1,13 +1,9 @@
-import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
-import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:expense_monitor/auth/view/signin.dart';
 import 'package:expense_monitor/components/button.dart';
 import 'package:expense_monitor/components/my_text_field.dart';
-import 'package:expense_monitor/screens/home/views/home_screen.dart';
-import 'package:expense_monitor/screens/home/views/main_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +47,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             signUpRequired = true;
           });
         } else if (state is SignUpFailure) {
-          return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+            ),
+          );
+          setState(() {
+            signUpRequired = false;
+          });
         }
       },
       child: Form(

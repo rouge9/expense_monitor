@@ -50,6 +50,16 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  Future<void> resetPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
   Future<MyUser> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

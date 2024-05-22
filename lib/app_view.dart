@@ -1,5 +1,6 @@
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
+import 'package:expense_monitor/auth/blocs/reset_password_bloc/reset_password_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
