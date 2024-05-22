@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:user_repository/user_repository.dart';
 
 class MainScreen extends StatelessWidget {
   final List<Expense> expenses;
@@ -49,27 +52,71 @@ class MainScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Hello,',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.outline,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              'John Doe',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
+                        BlocProvider(
+                          create: (context) => MyUserBloc(
+                              myUserRepository: context
+                                  .read<AuthenticationBloc>()
+                                  .userRepository)
+                            ..add(GetMyUser(
+                                myUserId: context
+                                    .read<AuthenticationBloc>()
+                                    .state
+                                    .user!
+                                    .uid)),
+                          child: BlocBuilder<MyUserBloc, MyUserState>(
+                              builder: (context, state) {
+                            if (state.status == MyUserStatus.success) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Hello,',
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    state.user!.name,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
                         ),
+                        // child: Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     Text(
+                        //       'Hello,',
+                        //       style: TextStyle(
+                        //         color: Theme.of(context).colorScheme.outline,
+                        //         fontSize: 12,
+                        //         fontWeight: FontWeight.w600,
+                        //       ),
+                        //     ),
+                        //     Text(
+                        //       'John Doe',
+                        //       style: TextStyle(
+                        //         fontSize: 18,
+                        //         fontWeight: FontWeight.bold,
+                        //         color:
+                        //             Theme.of(context).colorScheme.onSurface,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ],

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/components/main_shimmering_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_categorybloc/create_category_bloc.dart';
@@ -17,7 +18,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -88,13 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   create: (context) =>
                                       CreateExpenseBloc(FirebaseExpenseRepo()),
                                 ),
-                                BlocProvider(
-                                  create: (context) => SignInBloc(
-                                    userRepository: context
-                                        .read<AuthenticationBloc>()
-                                        .userRepository,
-                                  ),
-                                )
                               ],
                               child: const AddExpenseScreen(),
                             )));

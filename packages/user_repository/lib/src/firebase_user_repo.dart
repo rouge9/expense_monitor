@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:user_repository/src/entities/entities.dart';
 import 'package:user_repository/src/models/user.dart';
 import 'package:user_repository/src/user_repo.dart';
 
@@ -92,6 +93,17 @@ class FirebaseUserRepo implements UserRepository {
       await usersCollection
           .doc(myUser.userId)
           .set(myUser.toEntity().toDocument());
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<MyUser> getMyUser(String myUserId) async {
+    try {
+      final user = await usersCollection.doc(myUserId).get();
+      return MyUser.fromEntity(MyUserEntity.fromDocument(user.data()!));
     } catch (e) {
       log(e.toString());
       rethrow;
