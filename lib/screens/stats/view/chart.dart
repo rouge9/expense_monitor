@@ -3,7 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class MyChart extends StatefulWidget {
-  const MyChart({super.key});
+  final List data;
+  const MyChart({Key? key, required this.data}) : super(key: key);
 
   @override
   State<MyChart> createState() => _MyChartState();
@@ -13,7 +14,8 @@ class _MyChartState extends State<MyChart> {
   @override
   Widget build(BuildContext context) {
     return BarChart(
-      mainBarData(),
+      mainBarData(widget.data),
+      swapAnimationDuration: const Duration(milliseconds: 250),
     );
   }
 
@@ -25,7 +27,7 @@ class _MyChartState extends State<MyChart> {
           colors: [
             Theme.of(context).colorScheme.primary,
             Theme.of(context).colorScheme.secondary,
-            Theme.of(context).colorScheme.tertiary,
+            // Theme.of(context).colorScheme.tertiary,
           ],
           transform: const GradientRotation(pi / 40),
         ),
@@ -36,30 +38,30 @@ class _MyChartState extends State<MyChart> {
     ]);
   }
 
-  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
+  List<BarChartGroupData> showingGroups(List data) => List.generate(7, (i) {
         switch (i) {
           case 0:
-            return makeGroupData(0, 2);
+            return makeGroupData(0, data[0]);
           case 1:
-            return makeGroupData(1, 3);
+            return makeGroupData(1, data[1]);
           case 2:
-            return makeGroupData(2, 2);
+            return makeGroupData(2, data[2]);
           case 3:
-            return makeGroupData(3, 4.5);
+            return makeGroupData(3, data[3]);
           case 4:
-            return makeGroupData(4, 3.8);
+            return makeGroupData(4, data[4]);
           case 5:
-            return makeGroupData(5, 1.5);
+            return makeGroupData(5, data[5]);
           case 6:
-            return makeGroupData(6, 4);
+            return makeGroupData(6, data[6]);
           case 7:
-            return makeGroupData(7, 3.8);
+            return makeGroupData(7, data[7]);
           default:
             return throw Error();
         }
       });
 
-  BarChartData mainBarData() {
+  BarChartData mainBarData(List data) {
     return BarChartData(
       titlesData: FlTitlesData(
         show: true,
@@ -75,14 +77,14 @@ class _MyChartState extends State<MyChart> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 38,
+            reservedSize: 42,
             getTitlesWidget: leftTitles,
           ),
         ),
       ),
       borderData: FlBorderData(show: false),
       gridData: const FlGridData(show: false),
-      barGroups: showingGroups(),
+      barGroups: showingGroups(data),
     );
   }
 
@@ -134,21 +136,22 @@ class _MyChartState extends State<MyChart> {
       fontSize: 12,
     );
     String text;
-    if (value == 0) {
-      text = '';
-    } else if (value == 1) {
-      text = '\$ 1K';
-    } else if (value == 2) {
-      text = '\$ 2K';
-    } else if (value == 3) {
-      text = '\$ 3K';
-    } else if (value == 4) {
-      text = '\$ 4K';
-    } else if (value == 5) {
-      text = '\$ 5K';
-    } else {
-      return Container();
-    }
+    // if (value == 0) {
+    //   text = '';
+    // } else if (value == 1) {
+    //   text = '\$ 1K';
+    // } else if (value == 2) {
+    //   text = '\$ 2K';
+    // } else if (value == 3) {
+    //   text = '\$ 3K';
+    // } else if (value == 4) {
+    //   text = '\$ 4K';
+    // } else if (value == 5) {
+    //   text = '\$ 5K';
+    // } else {
+    //   return Container();
+    // }
+    text = '\$${value.toInt()}';
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 0,

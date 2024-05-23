@@ -55,6 +55,36 @@ class _StatScreenState extends State<StatScreen> {
             .fold<int>(
                 0, (previousValue, element) => previousValue + element.amount)
             .toString();
+
+        final sortedData = filteredExpenses.toList()
+          ..sort((a, b) => a.date.compareTo(b.date));
+
+        final List chartData = List.generate(7, (index) {
+          final dayExpenses = filteredExpenses.asMap().entries.where((element) {
+            final date = element.value.date;
+            if (date.weekday == DateTime.monday && index == 0) {
+              return true;
+            } else if (date.weekday == DateTime.tuesday && index == 1) {
+              return true;
+            } else if (date.weekday == DateTime.wednesday && index == 2) {
+              return true;
+            } else if (date.weekday == DateTime.thursday && index == 3) {
+              return true;
+            } else if (date.weekday == DateTime.friday && index == 4) {
+              return true;
+            } else if (date.weekday == DateTime.saturday && index == 5) {
+              return true;
+            } else if (date.weekday == DateTime.sunday && index == 6) {
+              return true;
+            } else {
+              return false;
+            }
+          }).map((e) => e.value);
+
+          return dayExpenses.fold<double>(
+              0, (previousValue, element) => previousValue + element.amount);
+        });
+
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -272,7 +302,9 @@ class _StatScreenState extends State<StatScreen> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height * 0.25,
-                          child: const MyChart(),
+                          child: MyChart(
+                            data: chartData,
+                          ),
                         )
                       ],
                     ),
