@@ -4,9 +4,24 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:user_repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
-Future<dynamic> addCategory(BuildContext context) {
+class AddCategory extends StatefulWidget {
+  const AddCategory({super.key});
+
+  @override
+  State<AddCategory> createState() => _AddCategoryState();
+}
+
+class _AddCategoryState extends State<AddCategory> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+Future<dynamic> addCategory(BuildContext context, userId) {
   bool isExpandabel = false;
   String iconSelected = '';
   Color colorSelected = Colors.white;
@@ -298,6 +313,7 @@ Future<dynamic> addCategory(BuildContext context) {
                                     category.name = categoryNameController.text;
                                     category.icon = iconSelected;
                                     category.color = colorSelected.value;
+                                    category.userId = userId;
                                   });
                                   context.read<CreateCategoryBloc>().add(
                                         CreateCategory(category),

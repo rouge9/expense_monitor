@@ -1,4 +1,7 @@
 import 'dart:math';
+import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/view/welcome_screen.dart';
+import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/get_user_expnese_bloc.dart';
 import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_monitor/screens/stats/view/chart.dart';
@@ -37,9 +40,9 @@ class _StatScreenState extends State<StatScreen> {
     final String prevWeek =
         DateFormat.yMMMd().format(endDateRange ?? DateTime.now());
 
-    return BlocBuilder<GetExpensesBloc, GetExpensesState>(
+    return BlocBuilder<GetUserExpneseBloc, GetUserExpneseState>(
         builder: (context, state) {
-      if (state is GetExpensesSuccess) {
+      if (state is GetUserExpneseSuccess) {
         final List<Expense> expenses = state.expenses;
 
         List<Expense> filteredExpenses = expenses
@@ -68,14 +71,19 @@ class _StatScreenState extends State<StatScreen> {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) =>
-                                    GetExpensesBloc(FirebaseExpenseRepo())
-                                      ..add(GetExpenses()),
-                                child: const HomeScreen(),
+                              builder: (context) => BlocBuilder<
+                                  AuthenticationBloc, AuthenticationState>(
+                                builder: (context, state) {
+                                  if (state.status ==
+                                      AuthenticationStatus.authenticated) {
+                                    return HomeScreen(userId: state.user!.uid);
+                                  } else {
+                                    return const WelcomeScreen();
+                                  }
+                                },
                               ),
                             ),
                           );
@@ -350,7 +358,7 @@ class _StatScreenState extends State<StatScreen> {
             ),
           ),
         );
-      } else if (state is GetExpensesLoading) {
+      } else if (state is GetUserExpneseLoading) {
         return const Center(
           child: StatShimmeringScreen(),
         );

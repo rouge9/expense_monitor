@@ -1,14 +1,13 @@
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
-import 'package:expense_monitor/auth/blocs/reset_password_bloc/reset_password_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/view/welcome_screen.dart';
+import 'package:expense_monitor/components/main_shimmering_screen.dart';
+import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/get_user_expnese_bloc.dart';
 import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
-// import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
-// import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -73,8 +72,13 @@ class MyAppView extends StatelessWidget {
                               .user!
                               .uid)),
                   ),
+                  BlocProvider(
+                    create: (context) =>
+                        GetUserExpneseBloc(FirebaseExpenseRepo())
+                          ..add(GetUserExpnese(state.user!.uid)),
+                  ),
                 ],
-                child: const HomeScreen(),
+                child: HomeScreen(userId: state.user!.uid),
               );
             } else {
               return const WelcomeScreen();

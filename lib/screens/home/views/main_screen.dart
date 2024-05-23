@@ -11,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
-import 'package:user_repository/user_repository.dart';
 
 class MainScreen extends StatelessWidget {
   final List<Expense> expenses;
@@ -95,28 +94,6 @@ class MainScreen extends StatelessWidget {
                             }
                           }),
                         ),
-                        // child: Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: [
-                        //     Text(
-                        //       'Hello,',
-                        //       style: TextStyle(
-                        //         color: Theme.of(context).colorScheme.outline,
-                        //         fontSize: 12,
-                        //         fontWeight: FontWeight.w600,
-                        //       ),
-                        //     ),
-                        //     Text(
-                        //       'John Doe',
-                        //       style: TextStyle(
-                        //         fontSize: 18,
-                        //         fontWeight: FontWeight.bold,
-                        //         color:
-                        //             Theme.of(context).colorScheme.onSurface,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                       ],
                     ),
                   ],
