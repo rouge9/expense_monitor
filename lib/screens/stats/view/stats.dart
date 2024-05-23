@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/get_user_expnese_bloc.dart';
-import 'package:expense_monitor/screens/home/blocs/get_expenses_bloc/get_expenses_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_monitor/screens/stats/view/chart.dart';
 import 'package:expense_monitor/screens/stats/view/stats_shummering_screen.dart';

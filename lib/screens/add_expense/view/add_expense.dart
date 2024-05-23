@@ -28,6 +28,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   DateTime selectedDate = DateTime.now();
   late Expense expense;
   bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+  String? _errorMsg;
 
   @override
   void initState() {
@@ -58,359 +60,350 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           });
         }
       },
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            appBar: AppBar(),
-            body: BlocBuilder<MyUserBloc, MyUserState>(
-              builder: (context, userState) {
-                if (userState.status == MyUserStatus.success &&
-                    userState.user != null) {
-                  return BlocProvider(
-                    create: (context) =>
-                        GetUserCategoryBloc(FirebaseExpenseRepo())
-                          ..add(GetUserCategory(userState.user!.userId)),
-                    child:
-                        BlocBuilder<GetUserCategoryBloc, GetUserCategoryState>(
-                      builder: (context, categoryState) {
-                        if (categoryState is GetUserCategorySuccess) {
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                const Text(
-                                  'Add Expense',
-                                  style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold,
+      child: Form(
+        key: _formKey,
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              appBar: AppBar(),
+              body: BlocBuilder<MyUserBloc, MyUserState>(
+                builder: (context, userState) {
+                  if (userState.status == MyUserStatus.success &&
+                      userState.user != null) {
+                    return BlocProvider(
+                      create: (context) =>
+                          GetUserCategoryBloc(FirebaseExpenseRepo())
+                            ..add(GetUserCategory(userState.user!.userId)),
+                      child: BlocBuilder<GetUserCategoryBloc,
+                          GetUserCategoryState>(
+                        builder: (context, categoryState) {
+                          if (categoryState is GetUserCategorySuccess) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.7,
-                                        child: TextFormField(
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                          controller: expenseController,
-                                          textAlignVertical:
-                                              TextAlignVertical.center,
-                                          decoration: InputDecoration(
-                                            label: const Text('0'),
-                                            floatingLabelBehavior:
-                                                FloatingLabelBehavior.never,
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            prefixIcon: Icon(
-                                              FontAwesomeIcons.dollarSign,
-                                              size: 16,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .outline,
-                                            ),
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                borderSide: BorderSide.none),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 40,
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: TextFormField(
-                                          controller: categoryController,
-                                          textAlignVertical:
-                                              TextAlignVertical.center,
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            label: const Text('Category'),
-                                            hintText: 'Category',
-                                            floatingLabelBehavior:
-                                                FloatingLabelBehavior.never,
-                                            filled: true,
-                                            fillColor: expense.category ==
-                                                    Category.empty
-                                                ? Colors.white
-                                                : Color(expense.category.color),
-                                            prefixIcon: expense.category ==
-                                                    Category.empty
-                                                ? Icon(
-                                                    FontAwesomeIcons.listCheck,
-                                                    size: 16,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .outline,
-                                                  )
-                                                : Image.asset(
-                                                    'assets/${expense.category.icon}.png',
-                                                    scale: 1.5,
-                                                    color: Colors.white,
-                                                  ),
-                                            suffixIcon: IconButton(
-                                              onPressed: () async {
-                                                var newCategory =
-                                                    await addCategory(context,
-                                                        userState.user!.userId);
-                                                if (newCategory != null) {
-                                                  setState(() {
-                                                    categoryState.categories
-                                                        .insert(0, newCategory);
-                                                  });
-                                                }
-                                              },
-                                              icon: Icon(
-                                                FontAwesomeIcons.plus,
+                                  const Text(
+                                    'Add Expense',
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.7,
+                                          child: TextFormField(
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                            controller: expenseController,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            decoration: InputDecoration(
+                                              label: const Text('0'),
+                                              floatingLabelBehavior:
+                                                  FloatingLabelBehavior.never,
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              prefixIcon: Icon(
+                                                FontAwesomeIcons.dollarSign,
                                                 size: 16,
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .onSurface,
+                                                    .outline,
+                                              ),
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  borderSide: BorderSide.none),
+                                              errorText: _errorMsg,
+                                              errorStyle: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .error),
+                                              errorBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                borderSide: BorderSide(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .error),
                                               ),
                                             ),
-                                            border: const OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.vertical(
-                                                        top: Radius.circular(
-                                                            10)),
-                                                borderSide: BorderSide.none),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 200,
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.vertical(
-                                            bottom: Radius.circular(10),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ListView.builder(
-                                            itemCount:
-                                                categoryState.categories.length,
-                                            itemBuilder: (context, index) {
-                                              return Dismissible(
-                                                key: Key(Random()
-                                                    .nextInt(100)
-                                                    .toString()),
-                                                direction:
-                                                    DismissDirection.endToStart,
-                                                onDismissed: (direction) {
-                                                  BlocProvider.of<
-                                                              DeleteCategoryBloc>(
-                                                          context)
-                                                      .add(DeleteCategory(
-                                                          categoryState
-                                                                  .categories[
-                                                              index]));
-                                                  setState(() {
-                                                    categoryState.categories
-                                                        .removeAt(index);
-                                                  });
-                                                },
-                                                confirmDismiss:
-                                                    (direction) async {
-                                                  return await showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Delete Category'),
-                                                        content: const Text(
-                                                            'Are you sure you want to delete this category?'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  false);
-                                                            },
-                                                            child: const Text(
-                                                                'No'),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  true);
-                                                            },
-                                                            child: const Text(
-                                                                'Yes'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                background: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: Colors.red,
-                                                  ),
-                                                  child: const Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 20),
-                                                      child: Icon(
-                                                        FontAwesomeIcons.trash,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Card(
-                                                  color: Color(categoryState
-                                                      .categories[index].color),
-                                                  child: ListTile(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        expense.category =
-                                                            categoryState
-                                                                    .categories[
-                                                                index];
-                                                        categoryController
-                                                                .text =
-                                                            expense
-                                                                .category.name;
-                                                      });
-                                                    },
-                                                    leading: Image.asset(
-                                                      'assets/${categoryState.categories[index].icon}.png',
-                                                      scale: 1.5,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: Text(categoryState
-                                                        .categories[index]
-                                                        .name),
-                                                  ),
-                                                ),
-                                              );
+                                            validator: (val) {
+                                              if (val!.isEmpty) {
+                                                return 'Please fill in this field';
+                                              }
+                                              return null;
                                             },
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: TextFormField(
-                                          controller: dateController,
-                                          onTap: () async {
-                                            DateTime? newDate =
-                                                await showDatePicker(
-                                                    context: context,
-                                                    initialDate: expense.date,
-                                                    firstDate: DateTime(2021),
-                                                    lastDate: DateTime.now());
+                                        const SizedBox(
+                                          height: 40,
+                                        ),
+                                        categorySelector(
+                                            context, userState, categoryState),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: TextFormField(
+                                            controller: dateController,
+                                            onTap: () async {
+                                              DateTime? newDate =
+                                                  await showDatePicker(
+                                                      context: context,
+                                                      initialDate: expense.date,
+                                                      firstDate: DateTime(2021),
+                                                      lastDate: DateTime.now());
 
-                                            if (newDate != null) {
-                                              setState(() {
-                                                dateController.text =
-                                                    DateFormat.yMMMd()
-                                                        .format(newDate);
+                                              if (newDate != null) {
+                                                setState(() {
+                                                  dateController.text =
+                                                      DateFormat.yMMMd()
+                                                          .format(newDate);
 
-                                                expense.date = newDate;
-                                              });
-                                            }
-                                          },
-                                          readOnly: true,
-                                          textAlignVertical:
-                                              TextAlignVertical.center,
-                                          decoration: InputDecoration(
-                                            label: const Text('Date'),
-                                            floatingLabelBehavior:
-                                                FloatingLabelBehavior.never,
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            prefixIcon: Icon(
-                                              FontAwesomeIcons.calendarDay,
-                                              size: 16,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .outline,
+                                                  expense.date = newDate;
+                                                });
+                                              }
+                                            },
+                                            readOnly: true,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            decoration: InputDecoration(
+                                              label: const Text('Date'),
+                                              floatingLabelBehavior:
+                                                  FloatingLabelBehavior.never,
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              prefixIcon: Icon(
+                                                FontAwesomeIcons.calendarDay,
+                                                size: 16,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outline,
+                                              ),
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  borderSide: BorderSide.none),
                                             ),
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                borderSide: BorderSide.none),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.2,
-                                      ),
-                                      Button(
-                                        onPressed: () {
-                                          setState(() {
-                                            expense.amount = int.parse(
-                                                expenseController.text);
-                                            expense.userId =
-                                                userState.user!.userId;
-                                          });
-                                          BlocProvider.of<CreateExpenseBloc>(
-                                                  context)
-                                              .add(CreateExpense(expense));
-                                        },
-                                        text: 'Save',
-                                        isGradient: true,
-                                        isLoading: isLoading,
-                                      )
-                                    ],
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                        ),
+                                        Button(
+                                          onPressed: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              setState(() {
+                                                expense.amount = int.parse(
+                                                    expenseController.text);
+                                                expense.userId =
+                                                    userState.user!.userId;
+                                              });
+                                              BlocProvider.of<
+                                                          CreateExpenseBloc>(
+                                                      context)
+                                                  .add(CreateExpense(expense));
+                                            }
+                                          },
+                                          text: 'Save',
+                                          isGradient: true,
+                                          isLoading: isLoading,
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  );
-                }
-              },
-            )),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    );
+                  }
+                },
+              )),
+        ),
       ),
+    );
+  }
+
+  Column categorySelector(BuildContext context, MyUserState userState,
+      GetUserCategorySuccess categoryState) {
+    return Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: TextFormField(
+            controller: categoryController,
+            textAlignVertical: TextAlignVertical.center,
+            readOnly: true,
+            decoration: InputDecoration(
+              label: const Text('Category'),
+              hintText: 'Category',
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              filled: true,
+              fillColor: expense.category == Category.empty
+                  ? Colors.white
+                  : Color(expense.category.color),
+              prefixIcon: expense.category == Category.empty
+                  ? Icon(
+                      FontAwesomeIcons.listCheck,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.outline,
+                    )
+                  : Image.asset(
+                      'assets/${expense.category.icon}.png',
+                      scale: 1.5,
+                      color: Colors.white,
+                    ),
+              suffixIcon: IconButton(
+                onPressed: () async {
+                  var newCategory =
+                      await addCategory(context, userState.user!.userId);
+                  if (newCategory != null) {
+                    setState(() {
+                      categoryState.categories.insert(0, newCategory);
+                    });
+                  }
+                },
+                icon: Icon(
+                  FontAwesomeIcons.plus,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                  borderSide: BorderSide.none),
+            ),
+          ),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 200,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(10),
+            ),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              itemCount: categoryState.categories.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: Key(Random().nextInt(100).toString()),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    BlocProvider.of<DeleteCategoryBloc>(context)
+                        .add(DeleteCategory(categoryState.categories[index]));
+                    setState(() {
+                      categoryState.categories.removeAt(index);
+                    });
+                  },
+                  confirmDismiss: (direction) async {
+                    return await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Delete Category'),
+                          content: const Text(
+                              'Are you sure you want to delete this category?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('No'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text('Yes'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  background: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.red,
+                    ),
+                    child: const Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Icon(
+                          FontAwesomeIcons.trash,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: Card(
+                    color: Color(categoryState.categories[index].color),
+                    child: ListTile(
+                      onTap: () {
+                        setState(() {
+                          expense.category = categoryState.categories[index];
+                          categoryController.text = expense.category.name;
+                        });
+                      },
+                      leading: Image.asset(
+                        'assets/${categoryState.categories[index].icon}.png',
+                        scale: 1.5,
+                        color: Colors.white,
+                      ),
+                      title: Text(categoryState.categories[index].name),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
