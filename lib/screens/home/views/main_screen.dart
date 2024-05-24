@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
@@ -11,16 +9,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:user_repository/user_repository.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   final List<Expense> expenses;
-  const MainScreen(this.expenses, {super.key});
+  final MyUser user;
+  const MainScreen({Key? key, required this.expenses, required this.user})
+      : super(key: key);
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  bool isDataEmpty = false;
+
   @override
   Widget build(BuildContext context) {
-    final sumExpense = expenses
+    final sumExpense = widget.expenses
         .fold<int>(
             0, (previousValue, element) => previousValue + element.amount)
         .toString();
+
+    if (widget.expenses.isEmpty) {
+      setState(() {
+        isDataEmpty = true;
+      });
+    }
 
     return SafeArea(
       child: Padding(
@@ -51,48 +66,26 @@ class MainScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(width: 10),
-                        BlocProvider(
-                          create: (context) => MyUserBloc(
-                              myUserRepository: context
-                                  .read<AuthenticationBloc>()
-                                  .userRepository)
-                            ..add(GetMyUser(
-                                myUserId: context
-                                    .read<AuthenticationBloc>()
-                                    .state
-                                    .user!
-                                    .uid)),
-                          child: BlocBuilder<MyUserBloc, MyUserState>(
-                              builder: (context, state) {
-                            if (state.status == MyUserStatus.success) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Hello,',
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.outline,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    state.user!.name,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Hello,',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.outline,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              widget.user.name,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -271,100 +264,120 @@ class MainScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<Expense>(
-                        builder: (context) => TransactionsScreen(expenses),
+                isDataEmpty
+                    ? Container()
+                    : GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<Expense>(
+                              builder: (context) =>
+                                  TransactionsScreen(widget.expenses),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'See all',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    'See all',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                  itemCount: expenses.length > 5 ? 5 : expenses.length,
-                  itemBuilder: (context, int i) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+              child: isDataEmpty
+                  ? Center(
+                      child: Text(
+                        'No transactions yet',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
+                    )
+                  : ListView.builder(
+                      itemCount: widget.expenses.length > 5
+                          ? 5
+                          : widget.expenses.length,
+                      itemBuilder: (context, int i) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Stack(
-                                alignment: Alignment.center,
+                              Row(
                                 children: [
-                                  Container(
-                                    width: 55,
-                                    height: 55,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(expenses[i].category.color),
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        width: 55,
+                                        height: 55,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(widget
+                                              .expenses[i].category.color),
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        'assets/${widget.expenses[i].category.icon}.png',
+                                        scale: 1.5,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    widget.expenses[i].category.name,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '\$ ${widget.expenses[i].amount}.00',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontSize: 16,
+                                      // fontWeight: FontWeight.bold
                                     ),
                                   ),
-                                  Image.asset(
-                                    'assets/${expenses[i].category.icon}.png',
-                                    scale: 1.5,
-                                    color: Colors.white,
+                                  Text(
+                                    DateFormat.yMMMd()
+                                        .format(widget.expenses[i].date)
+                                        .toString(),
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(width: 10),
-                              Text(
-                                expenses[i].category.name,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
                             ],
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '\$ ${expenses[i].amount}.00',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                  // fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              Text(
-                                DateFormat.yMMMd()
-                                    .format(expenses[i].date)
-                                    .toString(),
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                        );
+                      }),
             ),
           ],
         ),

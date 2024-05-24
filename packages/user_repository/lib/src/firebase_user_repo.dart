@@ -1,15 +1,19 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:user_repository/src/entities/entities.dart';
 import 'package:user_repository/src/models/user.dart';
 import 'package:user_repository/src/user_repo.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
   final usersCollection = FirebaseFirestore.instance.collection('users');
+  final categoryCollection =
+      FirebaseFirestore.instance.collection('categories');
 
   FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,
@@ -42,6 +46,91 @@ class FirebaseUserRepo implements UserRepository {
           email: myUser.email, password: password);
 
       myUser = myUser.copyWith(userId: user.user!.uid);
+      final List<Category> defaultCategories = [
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Food',
+          icon: 'food',
+          color: 0xffffca5c,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Transport',
+          icon: 'transport',
+          color: 0xff459ee8,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Shopping',
+          icon: 'shopping',
+          color: 0xff9c54e3,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Entertainment',
+          icon: 'entertainment',
+          color: 0xffe73f3f,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Health',
+          icon: 'health',
+          color: 4287135203,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Bills',
+          icon: 'bills',
+          color: 0xffcd66fe,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Pet',
+          icon: 'pet',
+          color: 0xffbf6d6d,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Fuel',
+          icon: 'fuel',
+          color: 0xffee879b,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Travel',
+          icon: 'travel',
+          color: 0xff08b59a,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Home Rent',
+          icon: 'home',
+          color: 0xffffc857,
+          userId: myUser.userId,
+        ),
+        Category(
+          categoryId: const Uuid().v1(),
+          name: 'Recharge',
+          icon: 'tech',
+          color: 0xff17cdb0,
+          userId: myUser.userId,
+        ),
+      ];
+
+      for (var category in defaultCategories) {
+        await categoryCollection
+            .doc(category.categoryId)
+            .set(category.toEntity().toDocument());
+      }
 
       return myUser;
     } catch (e) {

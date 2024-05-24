@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/get_user_expnese_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
@@ -56,9 +57,6 @@ class _StatScreenState extends State<StatScreen> {
                 0, (previousValue, element) => previousValue + element.amount)
             .toString();
 
-        final sortedData = filteredExpenses.toList()
-          ..sort((a, b) => a.date.compareTo(b.date));
-
         final List chartData = List.generate(7, (index) {
           final dayExpenses = filteredExpenses.asMap().entries.where((element) {
             final date = element.value.date;
@@ -108,7 +106,22 @@ class _StatScreenState extends State<StatScreen> {
                                 builder: (context, state) {
                                   if (state.status ==
                                       AuthenticationStatus.authenticated) {
-                                    return HomeScreen(userId: state.user!.uid);
+                                    return BlocProvider(
+                                      create: (context) => MyUserBloc(
+                                          myUserRepository: context
+                                              .read<AuthenticationBloc>()
+                                              .userRepository)
+                                        ..add(
+                                          GetMyUser(
+                                              myUserId: context
+                                                  .read<AuthenticationBloc>()
+                                                  .state
+                                                  .user!
+                                                  .uid),
+                                        ),
+                                      child:
+                                          HomeScreen(userId: state.user!.uid),
+                                    );
                                   } else {
                                     return const WelcomeScreen();
                                   }

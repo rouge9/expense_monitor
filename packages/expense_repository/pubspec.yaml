@@ -15,9 +15,6 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_bloc: ^8.1.5
 
-  user_repository:
-    path: ../user_repository
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

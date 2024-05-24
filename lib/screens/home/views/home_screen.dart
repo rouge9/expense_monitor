@@ -15,6 +15,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: implementation_imports
+import 'package:user_repository/src/models/user.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;
@@ -136,8 +138,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              body:
-                  index == 0 ? MainScreen(state.expenses) : const StatScreen(),
+              body: index == 0
+                  ? BlocBuilder<MyUserBloc, MyUserState>(
+                      builder: (ctx, userState) {
+                        if (userState.status == MyUserStatus.loading) {
+                          return const MainShimmeringScreen();
+                        } else if (userState.status == MyUserStatus.success) {
+                          return MainScreen(
+                              expenses: state.expenses,
+                              user: userState.user as MyUser);
+                        } else {
+                          return const MainShimmeringScreen();
+                        }
+                      },
+                    )
+                  : const StatScreen(),
             );
           } else if (state is GetUserExpneseLoading) {
             return const MainShimmeringScreen();

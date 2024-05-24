@@ -22,7 +22,10 @@ Future<dynamic> addCategory(BuildContext context, userId) {
     'shopping',
     'tech',
     'travel',
-    'fuel'
+    'fuel',
+    'health',
+    'bills',
+    'transport'
   ];
   Category category = Category.empty;
   final formKey = GlobalKey<FormState>();
