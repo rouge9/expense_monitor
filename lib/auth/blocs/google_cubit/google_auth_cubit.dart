@@ -1,8 +1,10 @@
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class GoogleAuthCubit extends Cubit<GoogleAuthState> {
   final UserRepository _userRepository;
@@ -39,11 +41,13 @@ class GoogleAuthCubit extends Cubit<GoogleAuthState> {
 
       // login to firebase using the OAuth credential
       final userCredential = await _auth.signInWithCredential(credential);
+
       await _userRepository.setUserData(
         MyUser(
           userId: userCredential.user!.uid,
           email: userCredential.user!.email.toString(),
           name: userCredential.user!.displayName.toString(),
+          picture: userCredential.user!.photoURL.toString(),
         ),
       );
 
@@ -51,5 +55,11 @@ class GoogleAuthCubit extends Cubit<GoogleAuthState> {
     } catch (e) {
       emit(GoogleAuthFailure(e.toString()));
     }
+  }
+
+  Future<void> resetAccount() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+    emit(GoogleAuthInitial());
   }
 }

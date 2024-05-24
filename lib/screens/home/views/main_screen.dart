@@ -1,13 +1,19 @@
 import 'dart:math';
 
+import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
+import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -36,7 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         isDataEmpty = true;
       });
     }
-
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
@@ -49,22 +54,67 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     Row(
                       children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.yellow[800]),
-                            ),
-                            Icon(
-                              CupertinoIcons.person_fill,
-                              color: Colors.yellow[900],
-                            ),
-                          ],
-                        ),
+                        widget.user.picture == ''
+                            ? GestureDetector(
+                                onTap: () async {
+                                  final picker = ImagePicker();
+
+                                  final pickedImage = await picker.pickImage(
+                                      source: ImageSource.gallery);
+                                  if (pickedImage != null) {
+                                    CroppedFile? croppedFile =
+                                        await ImageCropper().cropImage(
+                                      sourcePath: pickedImage.path,
+                                      aspectRatio: const CropAspectRatio(
+                                          ratioX: 1, ratioY: 1),
+                                      compressQuality: 70,
+                                      maxWidth: 500,
+                                      maxHeight: 500,
+                                      uiSettings: [
+                                        AndroidUiSettings(
+                                            toolbarTitle: 'Cropper',
+                                            toolbarColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            toolbarWidgetColor: Colors.white,
+                                            initAspectRatio:
+                                                CropAspectRatioPreset.original,
+                                            lockAspectRatio: false),
+                                        IOSUiSettings(
+                                          title: 'Cropper',
+                                        ),
+                                      ],
+                                    );
+                                    if (croppedFile != null) {
+                                      setState(() {
+                                        context.read<UploadPictureBloc>().add(
+                                            UploadPicture(croppedFile.path,
+                                                widget.user.userId));
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      color: Colors.yellow[800],
+                                      shape: BoxShape.circle),
+                                  child: Icon(CupertinoIcons.person_fill,
+                                      color: Colors.yellow[900]),
+                                ),
+                              )
+                            : Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.yellow[800],
+                                    image: DecorationImage(
+                                        image:
+                                            NetworkImage(widget.user.picture!),
+                                        fit: BoxFit.cover)),
+                              ),
                         const SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,11 +153,18 @@ class _MainScreenState extends State<MainScreen> {
                       onPressed: () {
                         try {
                           if (GoogleSignIn().currentUser != null) {
-                            GoogleSignIn().signOut();
-                          } else {
                             context
                                 .read<SignInBloc>()
                                 .add(const SignOutRequired());
+                          } else {
+                            context
+                                .read<GoogleAuthCubit>()
+                                .resetAccount()
+                                .then((_) {
+                              context
+                                  .read<SignInBloc>()
+                                  .add(const SignOutRequired());
+                            });
                           }
                         } catch (_) {}
                       },

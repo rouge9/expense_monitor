@@ -2,6 +2,7 @@ import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bl
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/get_user_expnese_bloc.dart';
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
@@ -70,6 +71,10 @@ class MyAppView extends StatelessWidget {
                     create: (context) =>
                         GetUserExpneseBloc(FirebaseExpenseRepo())
                           ..add(GetUserExpnese(state.user!.uid)),
+                  ),
+                  BlocProvider(
+                    create: (context) => UploadPictureBloc(
+                        context.read<AuthenticationBloc>().userRepository),
                   ),
                 ],
                 child: HomeScreen(userId: state.user!.uid),

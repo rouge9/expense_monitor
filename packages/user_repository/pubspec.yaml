@@ -19,6 +19,8 @@ dependencies:
   expense_repository:
     path: ../expense_repository
 
+  firebase_storage: ^11.7.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
