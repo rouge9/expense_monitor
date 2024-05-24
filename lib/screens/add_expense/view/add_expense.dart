@@ -7,6 +7,7 @@ import 'package:expense_monitor/screens/add_expense/blocs/delete_category_bloc/d
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_category_bloc/get_user_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/view/add_category.dart';
 import 'package:expense_repository/expense_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,7 +69,26 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           },
           child: Scaffold(
               backgroundColor: Theme.of(context).colorScheme.surface,
-              appBar: AppBar(),
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                leadingWidth: 70,
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(CupertinoIcons.arrow_left_circle_fill,
+                          color: Theme.of(context).colorScheme.outline),
+                    ),
+                  ),
+                ),
+              ),
               body: BlocBuilder<MyUserBloc, MyUserState>(
                 builder: (context, userState) {
                   if (userState.status == MyUserStatus.success &&
