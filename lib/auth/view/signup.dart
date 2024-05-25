@@ -3,6 +3,7 @@ import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
 import 'package:expense_monitor/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:expense_monitor/auth/view/signin.dart';
 import 'package:expense_monitor/components/button.dart';
+import 'package:expense_monitor/components/custome_app_bar.dart';
 import 'package:expense_monitor/components/my_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
               backgroundColor: Theme.of(context).colorScheme.surface,
+              leading: const CustomeAppBar(),
+              leadingWidth: 70,
             ),
             body: SingleChildScrollView(
               child: Padding(

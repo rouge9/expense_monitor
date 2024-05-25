@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/components/button.dart';
+import 'package:expense_monitor/components/custome_app_bar.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/delete_category_bloc/delete_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_category_bloc/get_user_category_bloc.dart';
@@ -72,22 +73,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               appBar: AppBar(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 leadingWidth: 70,
-                leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(CupertinoIcons.arrow_left_circle_fill,
-                          color: Theme.of(context).colorScheme.outline),
-                    ),
-                  ),
-                ),
+                leading: const CustomeAppBar(),
               ),
               body: BlocBuilder<MyUserBloc, MyUserState>(
                 builder: (context, userState) {

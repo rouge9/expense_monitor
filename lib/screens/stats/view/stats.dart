@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:user_repository/user_repository.dart';
 
 class StatScreen extends StatefulWidget {
   const StatScreen({super.key});
@@ -107,21 +108,21 @@ class _StatScreenState extends State<StatScreen> {
                                   if (state.status ==
                                       AuthenticationStatus.authenticated) {
                                     return BlocProvider(
-                                      create: (context) => MyUserBloc(
-                                          myUserRepository: context
-                                              .read<AuthenticationBloc>()
-                                              .userRepository)
-                                        ..add(
-                                          GetMyUser(
-                                              myUserId: context
-                                                  .read<AuthenticationBloc>()
-                                                  .state
-                                                  .user!
-                                                  .uid),
-                                        ),
-                                      child:
-                                          HomeScreen(userId: state.user!.uid),
-                                    );
+                                        create: (context) => MyUserBloc(
+                                            myUserRepository: context
+                                                .read<AuthenticationBloc>()
+                                                .userRepository)
+                                          ..add(
+                                            GetMyUser(
+                                                myUserId: context
+                                                    .read<AuthenticationBloc>()
+                                                    .state
+                                                    .user!
+                                                    .uid),
+                                          ),
+                                        child: HomeScreen(
+                                          userId: state.user!.uid,
+                                        ));
                                   } else {
                                     return const WelcomeScreen();
                                   }

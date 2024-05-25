@@ -72,10 +72,6 @@ class MyAppView extends StatelessWidget {
                         GetUserExpneseBloc(FirebaseExpenseRepo())
                           ..add(GetUserExpnese(state.user!.uid)),
                   ),
-                  BlocProvider(
-                    create: (context) => UploadPictureBloc(
-                        context.read<AuthenticationBloc>().userRepository),
-                  ),
                 ],
                 child: HomeScreen(userId: state.user!.uid),
               );

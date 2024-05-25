@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
+import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/components/main_shimmering_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_categorybloc/create_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
@@ -32,9 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GetUserExpneseBloc(FirebaseExpenseRepo())
-        ..add(GetUserExpnese(widget.userId)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GetUserExpneseBloc(FirebaseExpenseRepo())
+            ..add(GetUserExpnese(widget.userId)),
+        ),
+        BlocProvider(
+          create: (context) => UploadPictureBloc(
+              context.read<AuthenticationBloc>().userRepository),
+        ),
+      ],
       child: BlocBuilder<GetUserExpneseBloc, GetUserExpneseState>(
         builder: (context, state) {
           if (state is GetUserExpneseSuccess) {
@@ -109,6 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     create: (context) => CreateExpenseBloc(
                                         FirebaseExpenseRepo()),
                                   ),
+                                  BlocProvider(
+                                    create: (context) => UploadPictureBloc(
+                                        context
+                                            .read<AuthenticationBloc>()
+                                            .userRepository),
+                                  ),
                                 ],
                                 child: const AddExpenseScreen(),
                               )));
@@ -139,18 +154,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               body: index == 0
-                  ? BlocBuilder<MyUserBloc, MyUserState>(
-                      builder: (ctx, userState) {
-                        if (userState.status == MyUserStatus.loading) {
-                          return const MainShimmeringScreen();
-                        } else if (userState.status == MyUserStatus.success) {
-                          return MainScreen(
-                              expenses: state.expenses,
-                              user: userState.user as MyUser);
-                        } else {
-                          return const MainShimmeringScreen();
+                  ? BlocListener<UploadPictureBloc, UploadPictureState>(
+                      listener: (context, state) {
+                        if (state is UploadPictureSuccess) {
+                          setState(() {
+                            context
+                                .read<GetUserExpneseBloc>()
+                                .add(GetUserExpnese(widget.userId));
+                          });
                         }
                       },
+                      child: BlocBuilder<MyUserBloc, MyUserState>(
+                        builder: (ctx, userState) {
+                          if (userState.status == MyUserStatus.loading) {
+                            return const MainShimmeringScreen();
+                          } else if (userState.status == MyUserStatus.success) {
+                            return MainScreen(
+                                expenses: state.expenses,
+                                user: userState.user as MyUser);
+                          } else {
+                            return const MainShimmeringScreen();
+                          }
+                        },
+                      ),
                     )
                   : const StatScreen(),
             );

@@ -1,3 +1,4 @@
+import 'package:expense_monitor/components/button.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_categorybloc/create_category_bloc.dart';
 import 'package:expense_repository/expense_repository.dart';
@@ -317,6 +318,14 @@ Future<dynamic> addCategory(BuildContext context, userId) {
                                                 ),
                                               ),
                                             ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Button(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                text: 'Cancel')
                                           ],
                                         ),
                                       ),

@@ -1,17 +1,15 @@
 import 'dart:math';
 
-import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
+import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
-import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/screens/home/views/transactions_screen.dart';
+import 'package:expense_monitor/screens/home/views/profile_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -100,8 +98,8 @@ class _MainScreenState extends State<MainScreen> {
                                   decoration: BoxDecoration(
                                       color: Colors.yellow[800],
                                       shape: BoxShape.circle),
-                                  child: Icon(CupertinoIcons.person_fill,
-                                      color: Colors.yellow[900]),
+                                  child: Icon(FontAwesomeIcons.userPlus,
+                                      size: 18, color: Colors.yellow[900]),
                                 ),
                               )
                             : Container(
@@ -152,20 +150,30 @@ class _MainScreenState extends State<MainScreen> {
                   child: IconButton(
                       onPressed: () {
                         try {
-                          if (GoogleSignIn().currentUser != null) {
-                            context
-                                .read<SignInBloc>()
-                                .add(const SignOutRequired());
-                          } else {
-                            context
-                                .read<GoogleAuthCubit>()
-                                .resetAccount()
-                                .then((_) {
-                              context
-                                  .read<SignInBloc>()
-                                  .add(const SignOutRequired());
-                            });
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<ProfileScreen>(
+                              builder: (context) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (context) => UploadPictureBloc(
+                                      context
+                                          .read<AuthenticationBloc>()
+                                          .userRepository,
+                                    ),
+                                  ),
+                                ],
+                                child: ProfileScreen(
+                                  user: MyUser(
+                                    userId: widget.user.userId,
+                                    name: widget.user.name,
+                                    email: widget.user.email,
+                                    picture: widget.user.picture,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
                         } catch (_) {}
                       },
                       icon: Icon(
