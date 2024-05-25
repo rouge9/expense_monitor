@@ -60,6 +60,7 @@ Future<dynamic> addCategory(BuildContext context, userId) {
                         dismissDirection: DismissDirection.down,
                         behavior: SnackBarBehavior.floating,
                         content: Text(state.message),
+                        backgroundColor: Colors.redAccent,
                       ),
                     );
                   }

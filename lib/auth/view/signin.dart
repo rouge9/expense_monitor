@@ -128,6 +128,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.message.toString()),
+                            backgroundColor: Colors.redAccent,
                           ),
                         );
                       }
@@ -164,8 +165,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     if (state is GoogleAuthFailure) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(state.message),
-                        ),
+                            content: Text(state.message),
+                            backgroundColor: Colors.redAccent),
                       );
                     }
                     if (state is GoogleAuthSuccess) {

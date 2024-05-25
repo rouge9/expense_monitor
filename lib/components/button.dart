@@ -44,7 +44,9 @@ class Button extends StatelessWidget {
             )
           : TextButton(
               onPressed: () {
-                onPressed();
+                if (!isLoading) {
+                  onPressed();
+                }
               },
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(

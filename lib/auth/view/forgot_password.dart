@@ -82,6 +82,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(state.message),
+                              backgroundColor: Colors.redAccent,
                             ),
                           );
                         } else if (state is ResetPasswordLoading) {

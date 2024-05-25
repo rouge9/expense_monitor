@@ -51,6 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
+              backgroundColor: Colors.redAccent,
             ),
           );
           setState(() {
@@ -352,6 +353,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.message),
+                            backgroundColor: Colors.redAccent,
                           ),
                         );
                       }

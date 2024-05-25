@@ -39,10 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
           create: (context) => GetUserExpneseBloc(FirebaseExpenseRepo())
             ..add(GetUserExpnese(widget.userId)),
         ),
-        BlocProvider(
-          create: (context) => UploadPictureBloc(
-              context.read<AuthenticationBloc>().userRepository),
-        ),
       ],
       child: BlocBuilder<GetUserExpneseBloc, GetUserExpneseState>(
         builder: (context, state) {
@@ -118,12 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     create: (context) => CreateExpenseBloc(
                                         FirebaseExpenseRepo()),
                                   ),
-                                  BlocProvider(
-                                    create: (context) => UploadPictureBloc(
-                                        context
-                                            .read<AuthenticationBloc>()
-                                            .userRepository),
-                                  ),
                                 ],
                                 child: const AddExpenseScreen(),
                               )));
@@ -154,29 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               body: index == 0
-                  ? BlocListener<UploadPictureBloc, UploadPictureState>(
-                      listener: (context, state) {
-                        if (state is UploadPictureSuccess) {
-                          setState(() {
-                            context
-                                .read<GetUserExpneseBloc>()
-                                .add(GetUserExpnese(widget.userId));
-                          });
-                        }
-                      },
-                      child: BlocBuilder<MyUserBloc, MyUserState>(
-                        builder: (ctx, userState) {
-                          if (userState.status == MyUserStatus.loading) {
-                            return const MainShimmeringScreen();
-                          } else if (userState.status == MyUserStatus.success) {
-                            return MainScreen(
-                                expenses: state.expenses,
-                                user: userState.user as MyUser);
-                          } else {
-                            return const MainShimmeringScreen();
-                          }
-                        },
-                      ),
+                  ? MainScreen(
+                      expenses: state.expenses,
                     )
                   : const StatScreen(),
             );

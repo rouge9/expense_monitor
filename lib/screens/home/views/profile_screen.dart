@@ -5,8 +5,10 @@ import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_cubit.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
+import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/components/custome_app_bar.dart';
 import 'package:expense_monitor/components/profile_menu.dart';
+import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,9 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         if (state is UploadPictureSuccess) {
           setState(() {
-            context
-                .read<MyUserBloc>()
-                .add(GetMyUser(myUserId: widget.user.userId));
             widget.user.picture = state.pictureUrl;
             isLoading = false;
           });
@@ -51,7 +50,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          leading: const CustomeAppBar(),
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                        builder: (context, state) {
+                          if (state.status ==
+                              AuthenticationStatus.authenticated) {
+                            return BlocProvider(
+                                create: (context) => MyUserBloc(
+                                    myUserRepository: context
+                                        .read<AuthenticationBloc>()
+                                        .userRepository)
+                                  ..add(
+                                    GetMyUser(
+                                        myUserId: context
+                                            .read<AuthenticationBloc>()
+                                            .state
+                                            .user!
+                                            .uid),
+                                  ),
+                                child: HomeScreen(
+                                  userId: state.user!.uid,
+                                ));
+                          } else {
+                            return const WelcomeScreen();
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(CupertinoIcons.arrow_left_circle_fill,
+                    color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+          ),
           leadingWidth: 70,
         ),
         body: SingleChildScrollView(
@@ -87,118 +131,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BlocProvider(
-                          create: (context) => UploadPictureBloc(context
-                              .read<AuthenticationBloc>()
-                              .userRepository),
-                          child: Row(
-                            children: [
-                              widget.user.picture == ''
-                                  ? GestureDetector(
-                                      onTap: () async {
-                                        final picker = ImagePicker();
+                        Row(
+                          children: [
+                            widget.user.picture == ''
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      final picker = ImagePicker();
 
-                                        final pickedImage =
-                                            await picker.pickImage(
-                                                source: ImageSource.gallery);
-                                        if (pickedImage != null) {
-                                          CroppedFile? croppedFile =
-                                              await ImageCropper().cropImage(
-                                            sourcePath: pickedImage.path,
-                                            aspectRatio: const CropAspectRatio(
-                                                ratioX: 1, ratioY: 1),
-                                            compressQuality: 70,
-                                            maxWidth: 500,
-                                            maxHeight: 500,
-                                            uiSettings: [
-                                              AndroidUiSettings(
-                                                  toolbarTitle: 'Cropper',
-                                                  toolbarColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                  toolbarWidgetColor:
-                                                      Colors.white,
-                                                  initAspectRatio:
-                                                      CropAspectRatioPreset
-                                                          .original,
-                                                  lockAspectRatio: false),
-                                              IOSUiSettings(
-                                                title: 'Cropper',
-                                              ),
-                                            ],
-                                          );
-                                          if (croppedFile != null) {
-                                            setState(() {
-                                              context
-                                                  .read<UploadPictureBloc>()
-                                                  .add(UploadPicture(
-                                                      croppedFile.path,
-                                                      widget.user.userId));
-                                            });
-                                          }
+                                      final pickedImage =
+                                          await picker.pickImage(
+                                              source: ImageSource.gallery);
+                                      if (pickedImage != null) {
+                                        CroppedFile? croppedFile =
+                                            await ImageCropper().cropImage(
+                                          sourcePath: pickedImage.path,
+                                          aspectRatio: const CropAspectRatio(
+                                              ratioX: 1, ratioY: 1),
+                                          compressQuality: 70,
+                                          maxWidth: 500,
+                                          maxHeight: 500,
+                                          uiSettings: [
+                                            AndroidUiSettings(
+                                                toolbarTitle: 'Cropper',
+                                                toolbarColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                toolbarWidgetColor:
+                                                    Colors.white,
+                                                initAspectRatio:
+                                                    CropAspectRatioPreset
+                                                        .original,
+                                                lockAspectRatio: false),
+                                            IOSUiSettings(
+                                              title: 'Cropper',
+                                            ),
+                                          ],
+                                        );
+                                        if (croppedFile != null) {
+                                          setState(() {
+                                            context
+                                                .read<UploadPictureBloc>()
+                                                .add(UploadPicture(
+                                                    croppedFile.path,
+                                                    widget.user.userId));
+                                          });
                                         }
-                                      },
-                                      child: Container(
-                                        width: 70,
-                                        height: 70,
-                                        decoration: BoxDecoration(
-                                            color: Colors.yellow[800],
-                                            shape: BoxShape.circle),
-                                        child: Icon(FontAwesomeIcons.userPlus,
-                                            size: 25,
-                                            color: Colors.yellow[900]),
-                                      ),
-                                    )
-                                  : isLoading
-                                      ? Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: Container(
-                                            width: 70,
-                                            height: 70,
-                                            decoration: const BoxDecoration(
-                                                shape: BoxShape.circle),
-                                          ),
-                                        )
-                                      : Container(
-                                          width: 70,
-                                          height: 70,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.yellow[800],
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      widget.user.picture!),
-                                                  fit: BoxFit.cover)),
-                                        ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.user.name,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
-                                    Text(
-                                      widget.user.email,
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
-                                  ]),
-                            ],
-                          ),
+                                      }
+                                    },
+                                    child: isLoading
+                                        ? Shimmer.fromColors(
+                                            baseColor: Colors.grey[300]!,
+                                            highlightColor: Colors.grey[100]!,
+                                            child: Container(
+                                              width: 70,
+                                              height: 70,
+                                              decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white),
+                                            ),
+                                          )
+                                        : Stack(children: [
+                                            Container(
+                                              width: 70,
+                                              height: 70,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.yellow[800],
+                                                  shape: BoxShape.circle),
+                                              child: Icon(
+                                                  Icons.add_a_photo_outlined,
+                                                  size: 25,
+                                                  color: Colors.yellow[900]),
+                                            ),
+                                            Positioned(
+                                              bottom: 0,
+                                              right: 0,
+                                              child: Container(
+                                                width: 20,
+                                                height: 20,
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    shape: BoxShape.circle),
+                                                child: Icon(Icons.add,
+                                                    size: 15,
+                                                    color: Colors.yellow[900]),
+                                              ),
+                                            ),
+                                          ]),
+                                  )
+                                : Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.yellow[800],
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                widget.user.picture!),
+                                            fit: BoxFit.cover)),
+                                  ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.user.name,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface),
+                                  ),
+                                  Text(
+                                    widget.user.email,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface),
+                                  ),
+                                ]),
+                          ],
                         ),
                         IconButton(
                           onPressed: () {},
