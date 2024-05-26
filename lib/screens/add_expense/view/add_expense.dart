@@ -232,7 +232,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                               filled: true,
                                               fillColor: Colors.white,
                                               prefixIcon: Icon(
-                                                FontAwesomeIcons.calendarDay,
+                                                FontAwesomeIcons.calendarDays,
                                                 size: 16,
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -321,7 +321,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   : Color(expense.category.color),
               prefixIcon: expense.category == Category.empty
                   ? Icon(
-                      FontAwesomeIcons.listCheck,
+                      FontAwesomeIcons.list,
                       size: 16,
                       color: Theme.of(context).colorScheme.outline,
                     )
