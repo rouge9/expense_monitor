@@ -1,14 +1,16 @@
 import 'dart:math';
 
+import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
+import 'package:expense_monitor/auth/view/welcome_screen.dart';
 import 'package:expense_monitor/components/button.dart';
 import 'package:expense_monitor/components/custome_app_bar.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/delete_category_bloc/delete_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/get_user_category_bloc/get_user_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/view/add_category.dart';
+import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_repository/expense_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +48,36 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return BlocListener<CreateExpenseBloc, CreateExpenseState>(
       listener: (context, categoryState) {
         if (categoryState is CreateExpenseSuccess) {
-          Navigator.pop(context, expense);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  if (state.status == AuthenticationStatus.authenticated) {
+                    return BlocProvider(
+                        create: (context) => MyUserBloc(
+                            myUserRepository: context
+                                .read<AuthenticationBloc>()
+                                .userRepository)
+                          ..add(
+                            GetMyUser(
+                                myUserId: context
+                                    .read<AuthenticationBloc>()
+                                    .state
+                                    .user!
+                                    .uid),
+                          ),
+                        child: HomeScreen(
+                          userId: state.user!.uid,
+                        ));
+                  } else {
+                    return const WelcomeScreen();
+                  }
+                },
+              ),
+            ),
+          );
         } else if (categoryState is CreateExpenseFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
