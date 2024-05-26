@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
-import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/components/main_shimmering_screen.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_categorybloc/create_category_bloc.dart';
 import 'package:expense_monitor/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
@@ -17,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: implementation_imports
-import 'package:user_repository/src/models/user.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;

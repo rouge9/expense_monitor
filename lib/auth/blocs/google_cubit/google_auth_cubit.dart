@@ -1,10 +1,8 @@
 import 'package:expense_monitor/auth/blocs/google_cubit/google_auth_state.dart';
-import 'package:expense_repository/expense_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:uuid/uuid.dart';
 
 class GoogleAuthCubit extends Cubit<GoogleAuthState> {
   final UserRepository _userRepository;

@@ -203,6 +203,18 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  Future<void> updateUserData(MyUser myUser) async {
+    try {
+      await usersCollection
+          .doc(myUser.userId)
+          .update(myUser.toEntity().toDocument());
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
   Future<MyUser> getMyUser(String myUserId) async {
     try {
       final user = await usersCollection.doc(myUserId).get();

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:expense_monitor/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expense_monitor/auth/blocs/update_user_bloc/update_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:expense_monitor/auth/blocs/upload_picture_bloc/upload_picture_bloc.dart';
 import 'package:expense_monitor/components/main_shimmering_screen.dart';
@@ -11,10 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:user_repository/user_repository.dart';
 
 class MainScreen extends StatefulWidget {
@@ -129,6 +128,13 @@ class _MainScreenState extends State<MainScreen> {
                                     providers: [
                                       BlocProvider(
                                         create: (context) => UploadPictureBloc(
+                                          context
+                                              .read<AuthenticationBloc>()
+                                              .userRepository,
+                                        ),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => UpdateUserBloc(
                                           context
                                               .read<AuthenticationBloc>()
                                               .userRepository,
