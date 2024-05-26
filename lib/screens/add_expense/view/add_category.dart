@@ -32,10 +32,12 @@ Future<dynamic> addCategory(BuildContext context, userId) {
   final formKey = GlobalKey<FormState>();
   String? errorMsg;
   return showModalBottomSheet(
-      anchorPoint: const Offset(0.5, 0.5),
+      // anchorPoint: const Offset(0.5, 0.5),
       sheetAnimationStyle: AnimationStyle(
-          curve: Curves.easeInOut, duration: const Duration(milliseconds: 500)),
+          curve: Curves.easeInOutExpo,
+          duration: const Duration(milliseconds: 1000)),
       scrollControlDisabledMaxHeightRatio: 0.9,
+      showDragHandle: true,
       context: context,
       builder: (ctx) {
         return Form(
@@ -73,9 +75,6 @@ Future<dynamic> addCategory(BuildContext context, userId) {
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
                         const Text(
                           'Add Category',
                           style: TextStyle(

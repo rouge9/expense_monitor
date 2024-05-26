@@ -86,7 +86,7 @@ class FirebaseUserRepo implements UserRepository {
         categoryId: const Uuid().v1(),
         name: 'Home Rent',
         icon: 'home',
-        color: 0xffffc857,
+        color: 4278214756,
         userId: userId,
       ),
       Category(

@@ -116,9 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: const AddExpenseScreen(),
                               )));
                   if (newExpense != null) {
-                    setState(() {
-                      state.expenses.insert(0, newExpense);
-                    });
+                    // setState(() {
+                    //   state.expenses.insert(0, newExpense);
+                    // });
                   }
                 },
                 child: Container(
