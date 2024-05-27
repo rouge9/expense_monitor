@@ -20,6 +20,7 @@ dependencies:
   carousel_slider: ^4.2.1
 
   shimmer: ^3.0.0
+  flutter_native_splash: ^2.4.0
 
   firebase_core: ^2.16.0
   firebase_auth: ^4.19.5
