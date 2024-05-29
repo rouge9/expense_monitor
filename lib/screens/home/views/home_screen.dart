@@ -26,8 +26,27 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   int index = 0;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween(begin: 0.0, end: 15.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,73 +92,86 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: FloatingActionButton(
-                shape: const CircleBorder(),
-                onPressed: () async {
-                  var newExpense = await Navigator.push(
-                      context,
-                      MaterialPageRoute<Expense>(
-                          builder: (context) => MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                    create: (context) => MyUserBloc(
-                                        myUserRepository: context
-                                            .read<AuthenticationBloc>()
-                                            .userRepository)
-                                      ..add(
-                                        GetMyUser(
-                                            myUserId: context
-                                                .read<AuthenticationBloc>()
-                                                .state
-                                                .user!
-                                                .uid),
-                                      ),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => CreateCategoryBloc(
-                                        FirebaseExpenseRepo()),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) =>
-                                        GetCategoriesBloc(FirebaseExpenseRepo())
-                                          ..add(GetCategories()),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => DeleteCategoryBloc(
-                                        FirebaseExpenseRepo()),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => CreateExpenseBloc(
-                                        FirebaseExpenseRepo()),
-                                  ),
-                                ],
-                                child: const AddExpenseScreen(),
-                              )));
-                  if (newExpense != null) {
-                    // setState(() {
-                    //   state.expenses.insert(0, newExpense);
-                    // });
-                  }
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).colorScheme.tertiary,
-                        Theme.of(context).colorScheme.secondary,
-                        Theme.of(context).colorScheme.primary,
-                      ],
-                      transform: const GradientRotation(pi / 4),
+              floatingActionButton: AnimatedBuilder(
+                animation: _controller,
+                builder: (BuildContext context, Widget? child) {
+                  return Transform.translate(
+                    offset: Offset(0, -_animation.value),
+                    child: FloatingActionButton(
+                      shape: const CircleBorder(),
+                      onPressed: () async {
+                        var newExpense = await Navigator.push(
+                            context,
+                            MaterialPageRoute<Expense>(
+                                builder: (context) => MultiBlocProvider(
+                                      providers: [
+                                        BlocProvider(
+                                          create: (context) => MyUserBloc(
+                                              myUserRepository: context
+                                                  .read<AuthenticationBloc>()
+                                                  .userRepository)
+                                            ..add(
+                                              GetMyUser(
+                                                  myUserId: context
+                                                      .read<
+                                                          AuthenticationBloc>()
+                                                      .state
+                                                      .user!
+                                                      .uid),
+                                            ),
+                                        ),
+                                        BlocProvider(
+                                          create: (context) =>
+                                              CreateCategoryBloc(
+                                                  FirebaseExpenseRepo()),
+                                        ),
+                                        BlocProvider(
+                                          create: (context) =>
+                                              GetCategoriesBloc(
+                                                  FirebaseExpenseRepo())
+                                                ..add(GetCategories()),
+                                        ),
+                                        BlocProvider(
+                                          create: (context) =>
+                                              DeleteCategoryBloc(
+                                                  FirebaseExpenseRepo()),
+                                        ),
+                                        BlocProvider(
+                                          create: (context) =>
+                                              CreateExpenseBloc(
+                                                  FirebaseExpenseRepo()),
+                                        ),
+                                      ],
+                                      child: const AddExpenseScreen(),
+                                    )));
+                        if (newExpense != null) {
+                          // setState(() {
+                          //   state.expenses.insert(0, newExpense);
+                          // });
+                        }
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).colorScheme.tertiary,
+                              Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).colorScheme.primary,
+                            ],
+                            transform: const GradientRotation(pi / 4),
+                          ),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.add,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Icon(
-                    CupertinoIcons.add,
-                    color: Colors.white,
-                  ),
-                ),
+                  );
+                },
               ),
               body: index == 0
                   ? MainScreen(
@@ -162,5 +194,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

@@ -11,6 +11,7 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class StatScreen extends StatefulWidget {
@@ -163,6 +164,8 @@ class _StatScreenState extends State<StatScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.surface,
                                 title: const Text('Export to CSV'),
                                 content: const Text(
                                     'Do you want to export the data to CSV?'),
@@ -171,7 +174,10 @@ class _StatScreenState extends State<StatScreen> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Cancel'),
+                                    child: const Text('Cancel',
+                                        style: TextStyle(
+                                          color: Colors.redAccent,
+                                        )),
                                   ),
                                   TextButton(
                                     onPressed: () {
@@ -197,7 +203,7 @@ class _StatScreenState extends State<StatScreen> {
                             },
                           );
                         },
-                        icon: Icon(CupertinoIcons.slider_horizontal_3,
+                        icon: Icon(FontAwesomeIcons.fileExport,
                             color: Theme.of(context).colorScheme.outline),
                       ),
                     ),
