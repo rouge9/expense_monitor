@@ -6,6 +6,7 @@ import 'package:expense_monitor/screens/add_expense/blocs/get_user_expnese_bloc/
 import 'package:expense_monitor/screens/home/views/home_screen.dart';
 import 'package:expense_monitor/screens/stats/view/chart.dart';
 import 'package:expense_monitor/screens/stats/view/stats_shummering_screen.dart';
+import 'package:expense_monitor/utils/export_to_csv.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,16 @@ class _StatScreenState extends State<StatScreen> {
               0, (previousValue, element) => previousValue + element.amount);
         });
 
+        final List<List<dynamic>> csvData = [
+          ['Date', 'Amount', 'Category'],
+          for (int i = 0; i < filteredExpenses.length; i++)
+            [
+              DateFormat.yMMMd().format(filteredExpenses[i].date),
+              filteredExpenses[i].amount.toString(),
+              filteredExpenses[i].category.name,
+            ],
+        ];
+
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -147,7 +158,45 @@ class _StatScreenState extends State<StatScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Export to CSV'),
+                                content: const Text(
+                                    'Do you want to export the data to CSV?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      exportToCsv(csvData);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          dismissDirection:
+                                              DismissDirection.down,
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.greenAccent,
+                                          content: Text(
+                                            'Data exported successfully',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Export'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                         icon: Icon(CupertinoIcons.slider_horizontal_3,
                             color: Theme.of(context).colorScheme.outline),
                       ),
