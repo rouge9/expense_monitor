@@ -162,7 +162,7 @@ class _StatScreenState extends State<StatScreen> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
+                            builder: (BuildContext ctx) {
                               return AlertDialog(
                                 backgroundColor:
                                     Theme.of(context).colorScheme.surface,
@@ -172,7 +172,7 @@ class _StatScreenState extends State<StatScreen> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pop(context);
+                                      Navigator.pop(ctx);
                                     },
                                     child: const Text('Cancel',
                                         style: TextStyle(
@@ -181,20 +181,23 @@ class _StatScreenState extends State<StatScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pop(context);
-                                      exportToCsv(csvData);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          dismissDirection:
-                                              DismissDirection.down,
-                                          behavior: SnackBarBehavior.floating,
-                                          backgroundColor: Colors.greenAccent,
-                                          content: Text(
-                                            'Data exported successfully',
+                                      if (filteredExpenses.isNotEmpty) {
+                                        exportToCsv(csvData, ctx);
+                                      } else {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          const SnackBar(
+                                            dismissDirection:
+                                                DismissDirection.down,
+                                            behavior: SnackBarBehavior.floating,
+                                            backgroundColor: Colors.redAccent,
+                                            content: Text(
+                                              'No data to export',
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
+
+                                        Navigator.pop(ctx);
+                                      }
                                     },
                                     child: const Text('Export'),
                                   ),
